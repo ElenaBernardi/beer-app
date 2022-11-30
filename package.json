@@ -27,6 +27,7 @@
     "@types/koa-logger": "^3.1.2",
     "@types/koa-router": "^7.4.4",
     "@types/koa2-cors": "^2.0.2",
-    "@types/node": "^18.11.9"
+    "@types/node": "^18.11.9",
+    "ts-node-dev": "^2.0.0"
   }
 }
