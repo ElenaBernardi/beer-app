@@ -3,6 +3,8 @@ import cors from "koa2-cors";
 import logger from "koa-logger";
 import Koa from "koa";
 import beersRoutes from "./web/routes/BeersRoutes";
+import mongoose from "mongoose";
+import {rejects} from "assert";
 
 const app = new Koa();
 
@@ -16,8 +18,16 @@ app.use(
 );
 app.use(logger());
 
-
+// ROUTES
 app.use(beersRoutes.routes());
+// DB
+const db = require('./config/MongoConfig');
+console.log('db', db.url);
+mongoose.connect(db.url).then(() => {
+    console.log('CONNECTED');
+}, rejects => {
+    console.log('err', rejects);
+} ); //Mongoose connection created
 
 const server = app
     .listen(PORT, async () => {
