@@ -2,6 +2,7 @@ import Router from "koa-router";
 import BeerModel, {Beer} from "../../model/Beer";
 import {IBeerFilters} from "../BeerFilter";
 import {QueryBuilder} from "../../model/QueryBuilder";
+import {doMigration} from "../../model/MigrationService";
 
 
 const router = new Router();
@@ -64,7 +65,7 @@ router.post(`/beer`, async (ctx) => {
         const beerModel = new BeerModel(beer);
         beerModel.save((err, result) => {
             if (err) return console.error(err);
-            console.log(result.id + " saved to bookstore collection.");
+            console.log(result.id + " saved to beer collection.");
         })
         ctx.response.status = 201;
 
@@ -72,4 +73,15 @@ router.post(`/beer`, async (ctx) => {
         console.error(err);
     }
 });
+
+// Migrate DB
+router.get('/migration/beer', async (ctx) => {
+    try {
+        doMigration();
+        ctx.response.body = 'MIGRATE BEERS SUCCESSFULLY';
+    } catch (err) {
+        console.log(err);
+    }
+})
+
 export default router;

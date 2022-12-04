@@ -22,11 +22,10 @@ app.use(logger());
 app.use(beersRoutes.routes());
 // DB
 const db = require('./config/MongoConfig');
-console.log('db', db.url);
 mongoose.connect(db.url).then(() => {
     console.log('CONNECTED');
 }, rejects => {
-    console.log('err', rejects);
+    console.log('ERROR CONNECTED MONGO', rejects);
 } ); //Mongoose connection created
 
 const server = app
