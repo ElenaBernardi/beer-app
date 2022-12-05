@@ -1,11 +1,13 @@
-FROM node:12.2.0
+FROM node:16.15.1
 
 WORKDIR /app
 
-COPY . /app
+COPY package*.json ./
 
-RUN npm install --no-progress
+RUN npm install
+
+COPY . .
 
 EXPOSE 3000
 
-CMD [ "node", "-r", "esm", "server.js" ]
+CMD [ "npm", "start" ]

@@ -61,7 +61,6 @@ function isLaudable(succ: IRes | undefined, curr: IRes, array: IRes[], laudable:
 router.post(`/beer`, async (ctx) => {
     try {
         const beer = ctx?.request?.body as Beer;
-        // const beer = new Beer(iBeer?.type, iBeer?.quantity,iBeer?.productionDate );
         const beerModel = new BeerModel(beer);
         beerModel.save((err, result) => {
             if (err) return console.error(err);

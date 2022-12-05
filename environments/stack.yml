@@ -1,0 +1,32 @@
+version: '3.4'
+services:
+  ###    MongoDb   ####
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+  ###    Mongo Express   ####
+  mongo-express:
+      image: mongo-express
+      ports:
+        - 8081:8081
+      environment:
+        ME_CONFIG_MONGODB_SERVER: mongo
+
+  beer-app:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    deploy:
+      replicas: 1
+    restart: on-failure
+    networks:
+      - development_services_stack_default
+
+
+networks:
+  development_services_stack_default:
+    external:
+      name: environments_default
