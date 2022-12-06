@@ -22,8 +22,6 @@ const items = [
 
 export function doMigration(){
     items.forEach(item => {
-        mongoRepository.add(item).then().catch(error => {
-            console.error('ERROR', error);
-        });
+        mongoRepository.add(item).then();
     })
 }

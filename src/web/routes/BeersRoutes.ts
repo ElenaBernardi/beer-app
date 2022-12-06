@@ -86,6 +86,7 @@ router.get('/migration/beer', async (ctx) => {
         ctx.response.body = 'MIGRATE BEERS SUCCESSFULLY';
     } catch (err) {
         console.log(err);
+        ctx.response.status = 500;
     }
 })
 
