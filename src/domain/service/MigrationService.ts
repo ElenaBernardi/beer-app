@@ -1,5 +1,6 @@
 import BeerModel, {Beer, BeerType} from "../model/Beer";
 import {mongoRepository} from "../../storage/mongo";
+import {throws} from "assert";
 
 const items = [
     new Beer(BeerType.BIONDA, 2, '2022-12-01'),
@@ -20,8 +21,11 @@ const items = [
 
 ] as Beer[]
 
-export function doMigration(){
-    items.forEach(item => {
-        mongoRepository.add(item).then();
-    })
+export async function doMigration() {
+    const beers =[];
+    for (let item of items) {
+        const c = await mongoRepository.add(item);
+        beers.push(c);
+    }
+    return beers;
 }

@@ -82,8 +82,13 @@ router.post(`/beer`, async (ctx: Context) => {
  */
 router.get('/migration/beer', async (ctx) => {
     try {
-        doMigration();
-        ctx.response.body = 'MIGRATE BEERS SUCCESSFULLY';
+        await doMigration().then(u => {
+            ctx.response.body = u;
+            return ctx;
+        }).catch(x => {
+            ctx.response.status = 500;
+            return ctx
+        });
     } catch (err) {
         console.log(err);
         ctx.response.status = 500;
