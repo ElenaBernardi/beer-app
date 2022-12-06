@@ -1,7 +1,7 @@
-import {IBeerFilters} from "../web/BeerFilter";
+import {BeerFilters} from "../web/BeerFilter";
 
 export class QueryBuilder {
-    static buildQuery(filters: IBeerFilters) {
+    static buildQuery(filters: BeerFilters) {
         let query;
         if (filters.isLaudable && filters?.from && filters?.to) {
             if (filters.type) {

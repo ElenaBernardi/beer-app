@@ -55,7 +55,13 @@ Per fare il run dell'applicazione **Node**
 5. Run `sh  ./scripts/development-app-stack-stop.sh` per fermare il microservizio con tutte le dipendenze.
 6. Per rimuovere tutti i container `docker rm $(docker ps -a -q)`.
 
+## Run Test
+1. Apri il Terminale del PC.
+2. Posizionati sulla cartella root del microservizio.
+3. Run `npm run test`.
 
+## POSTMAN 
+E' possibile visionare postman con tutti gli esempi delle api al seguente link [Postman](https://documenter.getpostman.com/view/24791663/2s8YzP2QjF)
 
 
 

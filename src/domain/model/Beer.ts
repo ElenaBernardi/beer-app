@@ -1,13 +1,17 @@
 import * as mongoose from "mongoose";
 import {model} from "mongoose";
-import {IsDefined, IsEnum, IsString, Length, Validate} from "class-validator";
+import {IsDefined, IsEnum, IsString, Length} from "class-validator";
 
 const Schema = mongoose.Schema;
 
 export interface IBeer {
+    _id?: string;
     type: BeerType;
     quantity: number;
     productionDate: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
+    __v?: number;
 }
 
 export enum BeerType {
@@ -20,9 +24,7 @@ export enum BeerType {
 const beerSchema = new Schema<IBeer>({
     type: {type: String, enum: BeerType, required: true},
     quantity: {type: Number, required: true},
-    productionDate: {type: Date, required: true},
-    // createdAt: {type: Number, required: true},
-    // updatedAt: {type: Number, required: true}
+    productionDate: {type: Date, required: true}
 }, {
     timestamps: true
 });
@@ -49,5 +51,13 @@ export class Beer {
         this.type = type;
         this.quantity = quantity;
         this.productionDate = productionDate;
+    }
+
+    static createNewBeer(beer: IBeer){
+        const newBeer = new Beer(beer.type, beer.quantity, beer.productionDate.toISOString().split("T")[0]);
+        newBeer.id = beer._id;
+        newBeer.createdAt = beer.createdAt;
+        newBeer.updatedAt = beer.updatedAt;
+        return newBeer;
     }
 }

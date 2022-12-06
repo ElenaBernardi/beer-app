@@ -1,6 +1,6 @@
 import Router from "koa-router";
 import {Beer} from "../../domain/model/Beer";
-import {IBeerFilters} from "../BeerFilter";
+import {BeerFilters} from "../BeerFilter";
 import {QueryBuilder} from "../../storage/QueryBuilder";
 import {doMigration} from "../../domain/service/MigrationService";
 import {Context} from "koa";
@@ -19,15 +19,21 @@ const router = new Router();
  */
 router.post(`/beer/search`, async (ctx) => {
     try {
-        const filters = ctx?.request?.body as IBeerFilters;
-        const query = QueryBuilder.buildQuery(filters);
-        if (query != null) {
-            let beers = await mongoRepository.fetch(query);
-            if (filters.isLaudable) {
-                ctx.body = retrieveLaudableDays(beers);
-            } else {
-                ctx.body = beers;
+        const filters = new BeerFilters(ctx?.request?.body);
+        console.log('validate', filters.validate())
+        if (filters.validate()) {
+            const query = QueryBuilder.buildQuery(filters);
+            if (query != null) {
+                let beers = await mongoRepository.fetch(query);
+                if (filters.isLaudable) {
+                    ctx.body = retrieveLaudableDays(beers);
+                } else {
+                    ctx.body = beers;
+                }
             }
+        } else {
+            ctx.response.status = 400;
+            return ctx;
         }
     } catch (err) {
         console.error(err);
@@ -60,10 +66,7 @@ router.post(`/beer`, async (ctx: Context) => {
             };
             return ctx;
         }
-        await mongoRepository.add(beer).catch(() => {
-            ctx.response.status = 500;
-            return ctx;
-        })
+        ctx.response.body = await mongoRepository.add(beer);
         ctx.response.status = 201;
         return ctx;
 
