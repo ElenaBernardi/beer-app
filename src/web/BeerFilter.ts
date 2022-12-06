@@ -1,9 +1,7 @@
 import {BeerType} from "../domain/model/Beer";
-import {IsEnum, validate} from "class-validator";
 import {dateIsValid} from "../domain/service/BeerService";
 
 export class BeerFilters {
-    @IsEnum(BeerType)
     type?: BeerType;
     day?: string;
     from?: string;
