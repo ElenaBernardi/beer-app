@@ -1,7 +1,7 @@
 # Beer App
 Come far partire l'applicazione:
 ## Clone del Repository
-Scaricare l'applicazione con `git clone `
+Scaricare l'applicazione con `git clone https://github.com/ElenaBernardi/beer-app.git `
 ## Run del microservizio in locale
 ### Prerequisiti
 - Node
