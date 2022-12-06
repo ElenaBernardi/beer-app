@@ -1,31 +1,32 @@
 import Router from "koa-router";
-import BeerModel, {Beer} from "../../model/Beer";
+import {Beer} from "../../domain/model/Beer";
 import {IBeerFilters} from "../BeerFilter";
-import {QueryBuilder} from "../../model/QueryBuilder";
-import {doMigration} from "../../model/MigrationService";
+import {QueryBuilder} from "../../storage/QueryBuilder";
+import {doMigration} from "../../domain/service/MigrationService";
+import {Context} from "koa";
+import {validate} from "class-validator";
+import {mongoRepository} from "../../storage/mongo";
+import {dateIsValid, retrieveLaudableDays} from "../../domain/service/BeerService";
 
 
 const router = new Router();
 
-interface IRes {
-    quantity: number,
-    day: string
-}
-
 // Retrieve Beers
+/**
+ * Retrieve Beers or Laudable days
+ * @param filters {@link IBeerFilters}
+ * return beers list {@link Beer[]} or {days: string[], total: number} if you want laudable days
+ */
 router.post(`/beer/search`, async (ctx) => {
     try {
         const filters = ctx?.request?.body as IBeerFilters;
         const query = QueryBuilder.buildQuery(filters);
         if (query != null) {
-            let s = await BeerModel.aggregate(query);
+            let beers = await mongoRepository.fetch(query);
             if (filters.isLaudable) {
-                s = s as { quantity: number, day: string }[];
-                const curr = s.shift() as IRes
-                ctx.body = isLaudable(undefined, curr, s, []);
-
+                ctx.body = retrieveLaudableDays(beers);
             } else {
-                ctx.body = s;
+                ctx.body = beers;
             }
         }
     } catch (err) {
@@ -33,47 +34,49 @@ router.post(`/beer/search`, async (ctx) => {
     }
 });
 
-function isLaudable(succ: IRes | undefined, curr: IRes, array: IRes[], laudable: string[]) {
-    if (curr.quantity != 0) {
-        if (!succ?.quantity || curr.quantity > succ.quantity) {
-            const d = array.find(day => day.quantity >= curr.quantity)
-            if (!d) {
-                if (array.length) {
-                    const newCurr = array.shift() as IRes
-                    laudable.push(curr.day)
-                    isLaudable(curr, newCurr, array, laudable)
-                } else {
-                    laudable.push(curr.day)
-                }
-            }
-        }
-    }
-    const newCurr = array.shift() as IRes
-    if (newCurr) {
-        isLaudable(curr, newCurr, array, laudable)
-    }
-
-    return laudable;
-
-}
 
 // Create a new Beer
-router.post(`/beer`, async (ctx) => {
+/**
+ * Create a new Beer
+ *
+ * @param beer {@link Beer}
+ *
+ */
+router.post(`/beer`, async (ctx: Context) => {
     try {
-        const beer = ctx?.request?.body as Beer;
-        const beerModel = new BeerModel(beer);
-        beerModel.save((err, result) => {
-            if (err) return console.error(err);
-            console.log(result.id + " saved to beer collection.");
+        const validatorOptions = {};
+
+        const beer = new Beer();
+        const body = ctx?.request?.body as any;
+        beer.productionDate = body?.productionDate;
+        beer.type = body?.type;
+        beer.quantity = body?.quantity;
+        const errors = await validate(beer, validatorOptions)
+        if (errors.length > 0 || !dateIsValid(beer.productionDate)) {
+            ctx.status = 400;
+            ctx.body = {
+                status: 'error',
+                data: errors
+            };
+            return ctx;
+        }
+        await mongoRepository.add(beer).catch(() => {
+            ctx.response.status = 500;
+            return ctx;
         })
         ctx.response.status = 201;
+        return ctx;
 
     } catch (err) {
         console.error(err);
+        ctx.respose.status = 500;
+        return ctx;
     }
 });
 
-// Migrate DB
+/**
+ * Migrate DB with exercise beers
+ */
 router.get('/migration/beer', async (ctx) => {
     try {
         doMigration();

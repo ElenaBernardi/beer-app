@@ -8,13 +8,13 @@ Scaricare l'applicazione con `git clone `
 ### Dependencies
 
 Dipendenze che devono essere in run:
-- MongoDB (on localhost:27017)
+- MongoDB (su localhost:27017)
 
 Usa Docker Compose per eseguire le dipendenza all'interno di containers:
 
 1. Apri il Terminale del PC.
 2. Posizionati sulla cartella root del microservizio.
-3. Esegui `sh scripts/development-backend-stach.sh`.
+3. Esegui `sh scripts/development-backend-stack.sh`.
 
 Per verificare che i servizi siano attivi puoi provare ad aprire [MongoExpress](http://localhost:8081)
 

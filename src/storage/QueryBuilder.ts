@@ -1,5 +1,4 @@
 import {IBeerFilters} from "../web/BeerFilter";
-import {PipelineStage} from "mongoose";
 
 export class QueryBuilder {
     static buildQuery(filters: IBeerFilters) {

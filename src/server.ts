@@ -1,10 +1,9 @@
 import bodyParser from "koa-bodyparser";
-import cors from "koa2-cors";
 import logger from "koa-logger";
 import Koa from "koa";
 import beersRoutes from "./web/routes/BeersRoutes";
 import mongoose from "mongoose";
-import {rejects} from "assert";
+const cors = require('@koa/cors');
 
 const app = new Koa();
 

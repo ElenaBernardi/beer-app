@@ -1,4 +1,4 @@
-import {BeerType} from "../model/Beer";
+import {BeerType} from "../domain/model/Beer";
 
 export interface IBeerFilters{
     type?: BeerType;

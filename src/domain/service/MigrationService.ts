@@ -1,4 +1,5 @@
-import BeerModel, {Beer, BeerType} from "./Beer";
+import BeerModel, {Beer, BeerType} from "../model/Beer";
+import {mongoRepository} from "../../storage/mongo";
 
 const items = [
     new Beer(BeerType.BIONDA, 2, '2022-12-01'),
@@ -21,10 +22,8 @@ const items = [
 
 export function doMigration(){
     items.forEach(item => {
-        const beerModel = new BeerModel(item);
-        beerModel.save((err, result) => {
-            if (err) return console.error(err);
-            console.log(result.id + " saved to beer collection.");
-        })
+        mongoRepository.add(item).then().catch(error => {
+            console.error('ERROR', error);
+        });
     })
 }
